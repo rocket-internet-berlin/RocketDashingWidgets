@@ -1,0 +1,44 @@
+<script type='text/javascript'>
+  $(function() {
+    // These settings override the defaults set in application.coffee. You can do this on a per dashboard basis.
+    Dashing.widget_base_dimensions = [350, 300]
+    Dashing.numColumns = 5
+  });
+</script>
+
+<% content_for :title do %>Sample dashboard<% end %>
+<div class="gridster">
+  <ul>
+    <li data-row="1" data-col="1" data-sizex="1" data-sizey="1">
+      <div data-id="icinga-hosts" data-view="Simplemon" data-title="Icinga hosts"></div>
+    </li>
+
+    <li data-row="2" data-col="1" data-sizex="1" data-sizey="1">
+      <div data-id="icinga-hosts-latest" data-view="Table" data-title="Icinga host problems" class="latest-problems"></div>
+    </li>
+
+    <li data-row="1" data-col="2" data-sizex="1" data-sizey="1">
+      <div data-id="icinga-services" data-view="Simplemon" data-title="Icinga services"></div>
+    </li>
+
+    <li data-row="2" data-col="2" data-sizex="1" data-sizey="1">
+      <div data-id="icinga-services-latest" data-view="Table" data-title="Icinga service problems" class="latest-problems"></div>
+    </li>
+
+    <li data-row="1" data-col="3" data-sizex="1" data-sizey="1">
+      <div data-id="cloudwatch-alarms-ok" data-view="Simplemon" data-title="CloudWatch checks ok"></div>
+    </li>
+
+    <li data-row="2" data-col="3" data-sizex="1" data-sizey="1">
+      <div data-id="cloudwatch-alarms-failed" data-view="Table" data-title="CloudWatch problems" class="latest-problems"></div>
+    </li>
+
+    <li data-row="1" data-col="4" data-sizex="1" data-sizey="1">
+      <div data-id="new-relic-policies-ok" data-view="Simplemon" data-title="New Relic policies ok"></div>
+    </li>
+
+    <li data-row="2" data-col="4" data-sizex="1" data-sizey="1">
+      <div data-id="new-relic-policy-violations" data-view="Table" data-title="New Relic alerts" class="latest-problems"></div>
+    </li>
+  </ul>
+</div>
