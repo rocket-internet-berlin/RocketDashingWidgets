@@ -3,7 +3,8 @@ Dir.glob(File.join(File.dirname(__FILE__), 'lib', '**', '*.rb')).each { |f| requ
 
 configure do
   # If you don't want these jobs running, either remove the from the
-  # jobs/ directory or the config entries below.
+  # jobs/ directory or the config entries below. What they yield is
+  # displayed in dashboards/sample.erb (or some variation).
 
   set :use_icinga, RocketDashing::JobParameters.new(
                      # Configure your Icinga access here
@@ -23,6 +24,7 @@ configure do
   set :use_new_relic_alerts, RocketDashing::JobParameters.new(
                                                       api_key: 'YOUR NEW RELIC API KEY'
                     )
+
   helpers do
     def protected!
       # Put any authentication code you want in here.
