@@ -2,7 +2,16 @@ require 'aws'
 
 cloudwatch = nil
 
-SCHEDULER.every '1m', first_in: 0 do |job|
+def format_triggered_alarm alarm
+  truncator = RocketDashing::Truncator.new
+
+  {cols: [
+      {value: truncator.truncate(alarm[:alarm_name], 27)},
+      {value: truncator.truncate(alarm[:state_value], 5)}
+  ]}
+end
+
+SCHEDULER.every '2m', first_in: 0 do |job|
   parameters = settings.use_cloudwatch_alarms
   return unless parameters
 
@@ -15,24 +24,23 @@ SCHEDULER.every '1m', first_in: 0 do |job|
   ok_alarm_count = 0
   total_alarms_count = 0
   triggered_alarms = []
-
-  response = cloudwatch.describe_alarms
-
   has_alarms = false
 
-  response.metric_alarms.each do |alarm|
+  cloudwatch.describe_alarms(max_records: 100, state_value: 'OK').metric_alarms.each do |ok_alarm|
+    total_alarms_count += 1
+    ok_alarm_count += 1
+  end
+
+  cloudwatch.describe_alarms(max_records: 100, state_value: 'ALARM').metric_alarms.each do |triggered_alarm|
+    has_alarms = true
     total_alarms_count += 1
 
-    truncator = RocketDashing::Truncator.new
+    triggered_alarms << format_triggered_alarm(triggered_alarm)
+  end
 
-    has_alarms = true if !has_alarms && alarm[:state_value] == 'ALARM'
-
-    alarm[:state_value] == 'OK' ?
-        ok_alarm_count += 1 :
-        triggered_alarms << {cols: [
-            {value: truncator.truncate(alarm[:alarm_name], 27)},
-            {value: truncator.truncate(alarm[:state_value], 5)}
-        ]}
+  cloudwatch.describe_alarms(max_records: 100, state_value: 'INSUFFICIENT_DATA').metric_alarms.each do |insufficient_data|
+    total_alarms_count += 1
+    triggered_alarms << format_triggered_alarm(insufficient_data)
   end
 
   color = 'green'
